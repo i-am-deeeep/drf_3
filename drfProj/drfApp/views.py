@@ -8,6 +8,8 @@ from django.http import Http404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework import mixins
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle, ScopedRateThrottle
+from .throttling import BurstRateThrottle, SustainedRateThrottle
 
 
 # Create your views here.
@@ -73,10 +75,14 @@ class BlogListCV(generics.ListCreateAPIView):
     queryset=Blog.objects.all()
     serializer_class=BlogSerializer
     permission_classes=[IsAuthenticated]
+    throttle_classes=[ScopedRateThrottle]
+    throttle_scope='list-create'
     def perform_create(self, serializer):
+        print("hola ",self.request.user)
         serializer.save(owner=self.request.user)
 
 class BlogDetailCV(generics.RetrieveUpdateDestroyAPIView):
+    throttle_classes=[BurstRateThrottle, SustainedRateThrottle]
     queryset=Blog.objects.all()
     serializer_class=BlogSerializer
     permission_classes=[IsAuthenticated]
