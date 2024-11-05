@@ -5,7 +5,7 @@ from .serializers import BlogSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework import mixins
 
@@ -72,11 +72,11 @@ from rest_framework import mixins
 class BlogListCV(generics.ListCreateAPIView):
     queryset=Blog.objects.all()
     serializer_class=BlogSerializer
-    permission_classes=[IsAuthenticatedOrReadOnly]
+    permission_classes=[IsAuthenticated]
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
 class BlogDetailCV(generics.RetrieveUpdateDestroyAPIView):
     queryset=Blog.objects.all()
     serializer_class=BlogSerializer
-    permission_classes=[IsAuthenticatedOrReadOnly]
+    permission_classes=[IsAuthenticated]
